@@ -1,0 +1,1642 @@
+{
+  "models": [
+    {
+      "name": "ActivationContent",
+      "file": "ActivationContent.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "contents",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "Admin",
+      "file": "Admin.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "id",
+          "type": "Number",
+          "required": true
+        },
+        {
+          "name": "email",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "name",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "password",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "is_admin",
+          "type": "Number",
+          "default": "0"
+        },
+        {
+          "name": "max_connections",
+          "type": "Number",
+          "default": "0"
+        },
+        {
+          "name": "created_by",
+          "type": "String",
+          "default": "\"1\""
+        },
+        {
+          "name": "token",
+          "type": "String"
+        },
+        {
+          "name": "coupon_code",
+          "type": "String"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "AndroidApp",
+      "file": "AndroidApp.model.js",
+      "collection": null,
+      "timestamps": true,
+      "fields": [
+        {
+          "name": "package_id",
+          "type": "String",
+          "required": true,
+          "unique": true
+        },
+        {
+          "name": "app_name",
+          "type": "String",
+          "default": "\"\""
+        },
+        {
+          "name": "update_version",
+          "type": "String",
+          "default": "\"\""
+        },
+        {
+          "name": "update_url",
+          "type": "String",
+          "default": "\"\""
+        },
+        {
+          "name": "release_notes",
+          "type": "String",
+          "default": "\"\""
+        },
+        {
+          "name": "update_required",
+          "type": "Boolean",
+          "default": "false"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date"
+        }
+      ],
+      "indexes": [
+        {
+          "keys": {
+            "package_id": 1
+          },
+          "unique": true
+        }
+      ]
+    },
+    {
+      "name": "AppVersion",
+      "file": "AppVersion.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "platform",
+          "type": "String",
+          "required": true,
+          "enum": [
+            "androidtv",
+            "windows",
+            "linux",
+            "macos"
+          ]
+        },
+        {
+          "name": "version",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "minimum_version",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "version_code",
+          "type": "Number",
+          "required": true
+        },
+        {
+          "name": "url",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "sha256",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "updated_at",
+          "type": "Date",
+          "default": "Date.now()"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "BlockedIPAddress",
+      "file": "BlockedIPAddress.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "ip",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "reason",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "count",
+          "type": "Number",
+          "required": true,
+          "default": "1"
+        },
+        {
+          "name": "time",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "CoinList",
+      "file": "CoinList.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "name",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "code",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "Contact",
+      "file": "Contact.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "name",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "email",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "message",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "subject",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "answered",
+          "type": "Number",
+          "default": "0"
+        },
+        {
+          "name": "answer",
+          "type": "String"
+        },
+        {
+          "name": "time",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "ip",
+          "type": "String"
+        },
+        {
+          "name": "useragent",
+          "type": "String"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "CountryCode",
+      "file": "CountryCode.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "code",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "name",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "Coupon",
+      "file": "Coupon.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "email",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "count",
+          "type": "Number",
+          "required": true
+        },
+        {
+          "name": "code",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "used_count",
+          "type": "Number",
+          "default": "0"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "CouponActivity",
+      "file": "CouponActivity.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "coupon_id",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "mac_address",
+          "type": "String"
+        },
+        {
+          "name": "from_date",
+          "type": "String"
+        },
+        {
+          "name": "to_date",
+          "type": "String"
+        },
+        {
+          "name": "used_credit",
+          "type": "Number"
+        },
+        {
+          "name": "time",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "CreditPackage",
+      "file": "CreditPackage.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "credit_count",
+          "type": "Number",
+          "required": true,
+          "unique": true
+        },
+        {
+          "name": "duration",
+          "type": "Number",
+          "required": true
+        },
+        {
+          "name": "name",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": [
+        {
+          "keys": {
+            "credit_count": 1
+          },
+          "unique": true
+        }
+      ]
+    },
+    {
+      "name": "Device",
+      "file": "Device.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "mac_address",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "user_id",
+          "type": "ObjectId",
+          "ref": "User"
+        },
+        {
+          "name": "plan_id",
+          "type": "ObjectId",
+          "ref": "Plans",
+          "default": "null"
+        },
+        {
+          "name": "old_plan_id",
+          "type": "ObjectId",
+          "ref": "Plans",
+          "default": "null"
+        },
+        {
+          "name": "pre_plan_expire_date",
+          "type": "String",
+          "default": "null"
+        },
+        {
+          "name": "pre_plan_is_trial",
+          "type": "Number",
+          "default": "null"
+        },
+        {
+          "name": "switched_to",
+          "type": "String"
+        },
+        {
+          "name": "switched_from",
+          "type": "String"
+        },
+        {
+          "name": "switched_date",
+          "type": "String"
+        },
+        {
+          "name": "origin_mac_address",
+          "type": "String"
+        },
+        {
+          "name": "expire_date",
+          "type": "String"
+        },
+        {
+          "name": "is_trial",
+          "type": "Number",
+          "default": "0"
+        },
+        {
+          "name": "app_type",
+          "type": "String"
+        },
+        {
+          "name": "device_key",
+          "type": "String"
+        },
+        {
+          "name": "reseller_id",
+          "type": "String"
+        },
+        {
+          "name": "activated_by",
+          "type": "String"
+        },
+        {
+          "name": "multi_activate",
+          "type": "Number",
+          "default": "0"
+        },
+        {
+          "name": "credit_count",
+          "type": "Number",
+          "default": "1"
+        },
+        {
+          "name": "created_time",
+          "type": "String"
+        },
+        {
+          "name": "ip",
+          "type": "String"
+        },
+        {
+          "name": "is_automatic_saved",
+          "type": "Number"
+        },
+        {
+          "name": "app_device_id",
+          "type": "String",
+          "unique": true
+        },
+        {
+          "name": "device_name",
+          "type": "String",
+          "default": "\"Device\""
+        },
+        {
+          "name": "parent_pin",
+          "type": "String"
+        },
+        {
+          "name": "recaptcha_code",
+          "type": "String"
+        },
+        {
+          "name": "apiVersion",
+          "type": "String"
+        },
+        {
+          "name": "android_api_version",
+          "type": "String"
+        },
+        {
+          "name": "u_id",
+          "type": "String"
+        },
+        {
+          "name": "recovery_code",
+          "type": "String"
+        },
+        {
+          "name": "recovery_code_expires_at",
+          "type": "Date"
+        },
+        {
+          "name": "recovery_code_enabled",
+          "type": "Boolean",
+          "default": "false"
+        },
+        {
+          "name": "recaptcha_verified",
+          "type": "Boolean",
+          "default": "false"
+        },
+        {
+          "name": "recovered_from",
+          "type": "String"
+        },
+        {
+          "name": "recovered_date",
+          "type": "String"
+        },
+        {
+          "name": "pending_deletion",
+          "type": "Boolean",
+          "default": "false"
+        },
+        {
+          "name": "deletion_at",
+          "type": "Date",
+          "default": "null"
+        },
+        {
+          "name": "migrated_from",
+          "type": "String"
+        },
+        {
+          "name": "migrated_from_host",
+          "type": "String"
+        },
+        {
+          "name": "migrated_date",
+          "type": "String"
+        },
+        {
+          "name": "migrated_playlists_done",
+          "type": "Boolean",
+          "default": "false"
+        },
+        {
+          "name": "migration_checked_at",
+          "type": "Date",
+          "default": "null"
+        },
+        {
+          "name": "migrated_to_app",
+          "type": "String"
+        },
+        {
+          "name": "migrated_from_app",
+          "type": "String"
+        },
+        {
+          "name": "migrated_app_date",
+          "type": "String"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": [
+        {
+          "keys": {
+            "app_device_id": 1
+          },
+          "unique": true
+        },
+        {
+          "keys": {
+            "plan_id": 1,
+            "user_id": 1
+          },
+          "unique": false
+        },
+        {
+          "keys": {
+            "recovery_code": 1
+          },
+          "unique": false
+        }
+      ]
+    },
+    {
+      "name": "DomainMigration",
+      "file": "DomainMigration.model.js",
+      "collection": null,
+      "timestamps": true,
+      "fields": [
+        {
+          "name": "kind",
+          "type": "String",
+          "enum": [
+            "migration",
+            "mirror"
+          ],
+          "default": "\"migration\""
+        },
+        {
+          "name": "from_host",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "to_host",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "from_scheme",
+          "type": "String",
+          "default": "\"\""
+        },
+        {
+          "name": "to_scheme",
+          "type": "String",
+          "default": "\"\""
+        },
+        {
+          "name": "confirmed_by",
+          "type": "Array<String>",
+          "default": "[]"
+        },
+        {
+          "name": "confirmation_count",
+          "type": "Number",
+          "default": "0"
+        },
+        {
+          "name": "source",
+          "type": "String",
+          "enum": [
+            "user",
+            "admin"
+          ],
+          "default": "\"user\""
+        },
+        {
+          "name": "status",
+          "type": "String",
+          "enum": [
+            "pending",
+            "active",
+            "blocked"
+          ],
+          "default": "\"pending\""
+        },
+        {
+          "name": "first_seen_at",
+          "type": "Date",
+          "default": "Date.now()"
+        },
+        {
+          "name": "last_confirmed_at",
+          "type": "Date",
+          "default": "Date.now()"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date"
+        }
+      ],
+      "indexes": [
+        {
+          "keys": {
+            "from_host": 1,
+            "to_host": 1,
+            "kind": 1
+          },
+          "unique": true
+        },
+        {
+          "keys": {
+            "kind": 1,
+            "status": 1,
+            "last_confirmed_at": -1
+          },
+          "unique": false
+        }
+      ]
+    },
+    {
+      "name": "Faq",
+      "file": "Faq.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "content",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "Language",
+      "file": "Language.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "code",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "name",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "LanguageWord",
+      "file": "LanguageWord.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "language_id",
+          "type": "ObjectId",
+          "ref": "Language",
+          "required": true
+        },
+        {
+          "name": "word_id",
+          "type": "ObjectId",
+          "ref": "Word",
+          "required": true
+        },
+        {
+          "name": "value",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "News",
+      "file": "News.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "title",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "content",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "created",
+          "type": "Date",
+          "default": "Date.now()"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "Notification",
+      "file": "Notification.model.js",
+      "collection": null,
+      "timestamps": true,
+      "fields": [
+        {
+          "name": "title",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "message",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "reseller_id",
+          "type": "String"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "Plans",
+      "file": "Plans.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "name",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "description",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "price",
+          "type": "Number",
+          "required": true
+        },
+        {
+          "name": "number_of_devices",
+          "type": "Number",
+          "required": true
+        },
+        {
+          "name": "created_at",
+          "type": "Date",
+          "default": "Date.now()"
+        },
+        {
+          "name": "updated_at",
+          "type": "Date",
+          "default": "Date.now()"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "PlayList",
+      "file": "PlayList.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "device_id",
+          "type": "String"
+        },
+        {
+          "name": "url",
+          "type": "String"
+        },
+        {
+          "name": "playlist_name",
+          "type": "String"
+        },
+        {
+          "name": "portal_name",
+          "type": "String"
+        },
+        {
+          "name": "portal_address",
+          "type": "String"
+        },
+        {
+          "name": "fallback_portal_address",
+          "type": "String"
+        },
+        {
+          "name": "portal_fallback_address",
+          "type": "String"
+        },
+        {
+          "name": "stalker_mac_address",
+          "type": "String"
+        },
+        {
+          "name": "is_protected",
+          "type": "Number",
+          "default": "0"
+        },
+        {
+          "name": "pin",
+          "type": "String"
+        },
+        {
+          "name": "epg_url",
+          "type": "String"
+        },
+        {
+          "name": "playlist_type",
+          "type": "String"
+        },
+        {
+          "name": "username",
+          "type": "String"
+        },
+        {
+          "name": "password",
+          "type": "String"
+        },
+        {
+          "name": "code",
+          "type": "String"
+        },
+        {
+          "name": "expiration_date",
+          "type": "Date"
+        },
+        {
+          "name": "status",
+          "type": "String"
+        },
+        {
+          "name": "added_by",
+          "type": "String",
+          "default": "null"
+        },
+        {
+          "name": "logo",
+          "type": "String"
+        },
+        {
+          "name": "whatsapp",
+          "type": "String"
+        },
+        {
+          "name": "email",
+          "type": "String"
+        },
+        {
+          "name": "cross_dns_backup",
+          "type": "Number",
+          "default": "0"
+        },
+        {
+          "name": "backup_dns",
+          "type": "Array<String>",
+          "default": "[]"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "PrivacyContent",
+      "file": "PrivacyContent.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "contents",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "RecaptchaToken",
+      "file": "RecaptchaToken.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "token",
+          "type": "String",
+          "required": true,
+          "unique": true
+        },
+        {
+          "name": "captchaText",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "createdAt",
+          "type": "Date",
+          "default": "Date.now()"
+        },
+        {
+          "name": "mac_address",
+          "type": "String"
+        },
+        {
+          "name": "code",
+          "type": "String"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": [
+        {
+          "keys": {
+            "token": 1
+          },
+          "unique": true
+        },
+        {
+          "keys": {
+            "createdAt": 1
+          },
+          "unique": false
+        }
+      ]
+    },
+    {
+      "name": "Reseller",
+      "file": "Reseller.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "id",
+          "type": "Number",
+          "required": true
+        },
+        {
+          "name": "email",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "password",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "max_connections",
+          "type": "Number",
+          "default": "0"
+        },
+        {
+          "name": "used_count",
+          "type": "Number",
+          "default": "0"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "ResellerActivity",
+      "file": "ResellerActivity.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "reseller_id",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "mac_address",
+          "type": "String"
+        },
+        {
+          "name": "used_code",
+          "type": "String"
+        },
+        {
+          "name": "used_credit",
+          "type": "Number"
+        },
+        {
+          "name": "code_id",
+          "type": "String"
+        },
+        {
+          "name": "activity_time",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "from_date",
+          "type": "String"
+        },
+        {
+          "name": "to_date",
+          "type": "String"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "ResellerCode",
+      "file": "ResellerCode.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "code",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "reseller_id",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "is_used",
+          "type": "Number",
+          "default": "0"
+        },
+        {
+          "name": "note",
+          "type": "String"
+        },
+        {
+          "name": "created_time",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "used_time",
+          "type": "String"
+        },
+        {
+          "name": "mac_address",
+          "type": "String"
+        },
+        {
+          "name": "used_credit",
+          "type": "Number"
+        },
+        {
+          "name": "duration",
+          "type": "Number"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "ResellerContent",
+      "file": "ResellerContent.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "contents",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "ResellerLogo",
+      "file": "ResellerLogo.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "reseller_id",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "url",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "ResellerNotification",
+      "file": "ResellerNotification.model.js",
+      "collection": null,
+      "timestamps": true,
+      "fields": [
+        {
+          "name": "reseller_id",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "title",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "message",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date"
+        },
+        {
+          "name": "__v",
+          "type": "Number"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "ResellerPackage",
+      "file": "ResellerPackage.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "name",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "price",
+          "type": "Number",
+          "required": true
+        },
+        {
+          "name": "max_connections",
+          "type": "Number",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "Setting",
+      "file": "Setting.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "key",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "value",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "TermsContent",
+      "file": "TermsContent.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "contents",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "Transaction",
+      "file": "Transaction.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "device_id",
+          "type": "String",
+          "default": "null"
+        },
+        {
+          "name": "user_id",
+          "type": "ObjectId",
+          "ref": "User",
+          "default": "null"
+        },
+        {
+          "name": "payment_id",
+          "type": "String"
+        },
+        {
+          "name": "amount",
+          "type": "Number"
+        },
+        {
+          "name": "status",
+          "type": "String",
+          "default": "\"pending\""
+        },
+        {
+          "name": "pay_time",
+          "type": "String"
+        },
+        {
+          "name": "order_id",
+          "type": "String"
+        },
+        {
+          "name": "payment_type",
+          "type": "String"
+        },
+        {
+          "name": "transaction_type",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "credit_count",
+          "type": "Number"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "User",
+      "file": "User.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "first_name",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "last_name",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "email",
+          "type": "String",
+          "required": true,
+          "unique": true
+        },
+        {
+          "name": "password",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "is_verified",
+          "type": "Boolean",
+          "default": "false"
+        },
+        {
+          "name": "verified_at",
+          "type": "Date",
+          "default": "null"
+        },
+        {
+          "name": "created_at",
+          "type": "Date",
+          "default": "Date.now()"
+        },
+        {
+          "name": "verificationToken",
+          "type": "String",
+          "default": "null"
+        },
+        {
+          "name": "resetToken",
+          "type": "String",
+          "default": "null"
+        },
+        {
+          "name": "resetTokenExpires",
+          "type": "Date",
+          "default": "null"
+        },
+        {
+          "name": "plans",
+          "type": "Array<Object>",
+          "children": [
+            {
+              "name": "plan_id",
+              "type": "ObjectId",
+              "ref": "Plans",
+              "required": true
+            },
+            {
+              "name": "number_of_devices",
+              "type": "Number",
+              "required": true
+            },
+            {
+              "name": "devices",
+              "type": "Array<ObjectId>",
+              "ref": "Device"
+            },
+            {
+              "name": "_id",
+              "type": "ObjectId"
+            }
+          ]
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": [
+        {
+          "keys": {
+            "email": 1
+          },
+          "unique": true
+        },
+        {
+          "keys": {
+            "plans.plan_id": 1
+          },
+          "unique": false
+        }
+      ]
+    },
+    {
+      "name": "VerificationToken",
+      "file": "VerificationToken.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "user_id",
+          "type": "ObjectId",
+          "ref": "User",
+          "required": true
+        },
+        {
+          "name": "token",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "type",
+          "type": "String",
+          "required": true,
+          "enum": [
+            "verification",
+            "password_reset",
+            "email_verification_with_password_set"
+          ]
+        },
+        {
+          "name": "created_at",
+          "type": "Date",
+          "default": "Date.now()"
+        },
+        {
+          "name": "expires_at",
+          "type": "Date",
+          "required": true,
+          "default": "(computed)"
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": [
+        {
+          "keys": {
+            "created_at": 1
+          },
+          "unique": false
+        }
+      ]
+    },
+    {
+      "name": "Word",
+      "file": "Word.model.js",
+      "collection": null,
+      "timestamps": false,
+      "fields": [
+        {
+          "name": "name",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "_id",
+          "type": "ObjectId"
+        }
+      ],
+      "indexes": []
+    }
+  ],
+  "errors": []
+}

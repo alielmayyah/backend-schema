@@ -1,0 +1,638 @@
+<title>Player Backends Schema</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: header + tab strip, then per-project relationship map above a masonry of collection cards; compare view is a presence matrix. */
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-2: #eef0f4;
+  --fg: #1a1f2b;
+  --muted: #5d6577;
+  --line: #d9dde5;
+  --accent: #2f5bd3;
+  --accent-soft: #e3eafc;
+  --bob: #c2610f;
+  --cr: #2f5bd3;
+  --ibo: #12875f;
+  --new: #7c3aed;
+  --warn: #a35a00;
+  /* collection groups */
+  --g-device: #2f6fd6;
+  --g-reseller: #d9750f;
+  --g-user: #8a4fd1;
+  --g-billing: #1f9a5a;
+  --g-code: #0e8f9c;
+  --g-content: #c2457a;
+  --g-system: #6b7385;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11141b; --surface: #181c25; --surface-2: #212633; --fg: #e6e9f0; --muted: #98a0b3;
+    --line: #2e3443; --accent: #7d9cf5; --accent-soft: #1f2a48;
+    --bob: #f09a4e; --cr: #7d9cf5; --ibo: #4cc89a; --new: #a78bfa; --warn: #e3a54a; --g-device: #6fa2f5; --g-reseller: #f2a04f; --g-user: #b78cf2; --g-billing: #4fc98a; --g-code: #45c4cf; --g-content: #ef80ad; --g-system: #9aa2b4; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11141b; --surface: #181c25; --surface-2: #212633; --fg: #e6e9f0; --muted: #98a0b3;
+  --line: #2e3443; --accent: #7d9cf5; --accent-soft: #1f2a48;
+  --bob: #f09a4e; --cr: #7d9cf5; --ibo: #4cc89a; --new: #a78bfa; --warn: #e3a54a; --g-device: #6fa2f5; --g-reseller: #f2a04f; --g-user: #b78cf2; --g-billing: #4fc98a; --g-code: #45c4cf; --g-content: #ef80ad; --g-system: #9aa2b4; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 14px; line-height: 1.5; }
+.wrap { max-width: 1320px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 32px; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+.sub { color: var(--muted); margin: 4px 0 0; max-width: 68ch; }
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+.stats { display: flex; gap: 20px; font-variant-numeric: tabular-nums; }
+.stat b { display: block; font-family: var(--font-display); font-size: 1.4rem; line-height: 1; }
+.stat span { color: var(--muted); font-size: 12px; }
+
+nav.tabs { display: flex; gap: 4px; margin-top: 24px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+nav.tabs button { font: 600 14px var(--font-body); color: var(--muted); background: none; border: 0; padding: 10px 14px; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+nav.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--tab-c, var(--accent)); }
+nav.tabs button:focus-visible, button:focus-visible, input:focus-visible, .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c); display: inline-block; flex: none; }
+.count { font-weight: 500; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin: 20px 0 16px; }
+.toolbar input[type="search"] { font: inherit; padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--fg); width: min(340px, 100%); }
+.toolbar label { display: flex; align-items: center; gap: 6px; color: var(--muted); cursor: pointer; }
+
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; margin: 28px 0 10px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+h2 small { font: 400 13px var(--font-body); color: var(--muted); }
+
+.map { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.map .canvas { overflow-x: auto; }
+.map svg.er { display: block; margin: 0 auto; max-width: none; height: auto; }
+.map .node rect { fill: color-mix(in srgb, var(--cc) 12%, var(--surface)); stroke: color-mix(in srgb, var(--cc) 55%, var(--surface)); stroke-width: 1.2; }
+.map .node.hub rect { fill: color-mix(in srgb, var(--cc) 22%, var(--surface)); stroke: var(--cc); stroke-width: 2; }
+.map .node .sep { stroke: color-mix(in srgb, var(--cc) 35%, var(--surface)); stroke-width: 1; }
+.map .node .nh { fill: var(--fg); font: 600 13px var(--font-body); }
+.map .node .nf { fill: var(--muted); font: 11.5px var(--font-mono); }
+.map .node .port { fill: var(--surface); stroke: var(--muted); stroke-width: 1.2; }
+.map .node { cursor: pointer; outline: none; }
+.map .node:hover rect, .map .node:focus-visible rect { stroke: var(--cc); stroke-width: 2.5; }
+.map .edge { stroke: var(--cc); stroke-width: 1.5; fill: none; opacity: 0.85; transition: opacity .15s; }
+.map .edge.inferred { stroke-dasharray: 5 4; }
+.map marker path { fill: var(--cc); }
+.map svg.tracing .edge { opacity: 0.1; }
+.map svg.tracing .edge.hot { opacity: 1; stroke-width: 2.2; }
+.groups { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 10px 14px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--fg); }
+.groups span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 12px; border-radius: 3px; background: color-mix(in srgb, var(--cc) 22%, var(--surface)); border: 1.5px solid var(--cc); flex: none; }
+.grid .card { border-top: 3px solid var(--cc, var(--line)); }
+.card h3 { display: flex; align-items: center; gap: 8px; }
+.card .grp { font-size: 11px; font-weight: 600; color: var(--cc); letter-spacing: 0.03em; text-transform: uppercase; }
+.chip { background: color-mix(in srgb, var(--cc) 14%, var(--surface)) !important; border-color: var(--cc) !important; }
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 20px; padding: 10px 14px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12.5px; }
+.legend .lg { display: inline-flex; align-items: center; gap: 8px; }
+.legend svg { display: block; flex: none; }
+.legend svg line { stroke: var(--muted); stroke-width: 1.5; }
+
+.grid { columns: 3 340px; column-gap: 14px; }
+.card { break-inside: avoid; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; margin: 0 0 14px; scroll-margin-top: 16px; }
+.card.flash { outline: 2px solid var(--pc); outline-offset: 1px; }
+.card header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.card h3 { margin: 0; font: 600 15px var(--font-display); }
+.card .meta { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.card table { width: 100%; border-collapse: collapse; }
+.card td { padding: 4px 14px; vertical-align: top; border-top: 1px solid var(--surface-2); }
+.card tr:first-child td { border-top: 0; }
+.card td.f { font-family: var(--font-mono); font-size: 12.5px; word-break: break-word; }
+.card td.t { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); text-align: right; white-space: nowrap; }
+.card tr.sys td { opacity: 0.6; }
+.card tr.child td.f { padding-left: 28px; }
+.flags { display: inline-flex; flex-wrap: wrap; gap: 4px; margin-left: 6px; vertical-align: 1px; }
+.flag { font: 500 10px var(--font-body); letter-spacing: 0.04em; text-transform: uppercase; padding: 0 5px; border-radius: 3px; border: 1px solid var(--line); color: var(--muted); }
+.flag.req { color: var(--warn); border-color: currentColor; }
+.flag.uniq { color: var(--accent); border-color: currentColor; }
+.dflt { display: block; color: var(--muted); font-size: 11px; }
+.chip { display: inline-block; font: 600 11px var(--font-body); padding: 1px 7px; border-radius: 10px; margin-left: 6px; background: var(--accent-soft); color: var(--fg); border: 1px solid var(--pc); cursor: pointer; vertical-align: 1px; }
+.chip.inferred { border-style: dashed; }
+.empty { color: var(--muted); padding: 24px 0; }
+/* New Unified tab */
+.card .purpose { margin: 0; padding: 8px 14px 4px; color: var(--muted); font-size: 12.5px; max-width: none; }
+.card .idx { margin: 0; padding: 8px 14px 10px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+.card .idx b { color: var(--fg); font-weight: 600; margin-right: 4px; }
+.oldk { font-family: var(--font-mono); color: var(--g-reseller); }
+.lead-new { color: var(--muted); max-width: 90ch; margin: 18px 0 0; }
+/* diagram detail toggle + full ER rows */
+.mapmode { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; margin: 0 0 10px; background: var(--surface); }
+.mapmode button { font: 600 13px var(--font-body); color: var(--muted); background: none; border: 0; padding: 6px 12px; cursor: pointer; }
+.mapmode button + button { border-left: 1px solid var(--line); }
+.mapmode button[aria-pressed="true"] { color: var(--fg); background: var(--accent-soft); }
+.map .node .ntype { fill: var(--muted); font: 10.5px var(--font-mono); opacity: 0.85; }
+.map .node .nf.rel { fill: var(--fg); font-weight: 600; }
+/* Compare: New Unified column */
+.tchip { display: inline-block; font: 500 11.5px var(--font-mono); padding: 1px 6px; margin: 1px 0; border-radius: 4px; background: color-mix(in srgb, var(--cc) 13%, var(--surface)); border: 1px solid color-mix(in srgb, var(--cc) 60%, var(--surface)); color: var(--fg); cursor: pointer; white-space: nowrap; }
+.tchip:hover, .tchip:focus-visible { border-color: var(--cc); outline: none; }
+.nomig { color: var(--bad, #b3261e); font-weight: 600; font-size: 12px; }
+.muted { color: var(--muted); }
+.matrix tr.fresh td { background: color-mix(in srgb, var(--new) 5%, var(--surface)); }
+.diff li.miss { color: var(--bad, #b3261e); }
+.diff li.drop { color: var(--muted); }
+.diff .newcol { grid-column: 1 / -1; }
+.diff .newcol ul { columns: 2 280px; column-gap: 24px; }
+.diff .newcol .rule { margin: 0 0 6px; font-size: 12.5px; color: var(--muted); max-width: 90ch; }
+
+.matrix-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+table.matrix { border-collapse: collapse; width: 100%; min-width: 560px; font-variant-numeric: tabular-nums; }
+.matrix th, .matrix td { padding: 7px 14px; border-bottom: 1px solid var(--line); text-align: left; }
+.matrix thead th { font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; position: sticky; top: 0; background: var(--surface); }
+.matrix td.n { font-family: var(--font-mono); font-size: 12.5px; }
+.matrix td.c { text-align: center; }
+.matrix tr.row { cursor: pointer; }
+.matrix tr.row:hover td { background: var(--surface-2); }
+.pres { display: inline-block; min-width: 34px; padding: 1px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--c); border: 1px solid var(--c); }
+.abs { color: var(--line); }
+.diff td { background: var(--surface-2); padding: 10px 14px 14px; }
+.diff .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px 24px; }
+.diff h4 { margin: 0 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.diff ul { margin: 0; padding: 0; list-style: none; font-family: var(--font-mono); font-size: 12px; }
+.diff li { padding: 1px 0; }
+.note { color: var(--muted); font-size: 12.5px; margin-top: 10px; max-width: 80ch; }
+@media (prefers-reduced-motion: no-preference) { .card { transition: outline-color .3s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Player Backends Schema</h1>
+      <p class="sub">Mongoose models from <code>bobplayer-backend</code>, <code>cr-unified-backend</code> and <code>iboplayer-backend</code>, loaded straight from each project's <code>models/</code> folder on 2026-10-20.</p>
+    </div>
+    <div class="stats" id="stats"></div>
+  </header>
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+  <main id="view"></main>
+  <section id="migration" hidden>
+/*MIGRATION_HTML*/
+  </section>
+</div>
+<script>
+/*MIGRATION_JS*/
+</script>
+
+<script>
+const DATA = /*DATA*/;
+
+const PROJECTS = [
+  { key: 'bob', label: 'BOB Player', dir: 'bobplayer-backend', color: '--bob' },
+  { key: 'cr', label: 'CR Unified', dir: 'cr-unified-backend', color: '--cr' },
+  { key: 'ibo', label: 'IBO Player', dir: 'iboplayer-backend', color: '--ibo' },
+];
+// The proposed target schema, from the migration plan.
+// Kept out of PROJECTS so the stats and the Compare matrix stay about the three old backends.
+const NEWP = { key: 'new', label: 'New Unified', dir: 'new-unified-backend', color: '--new' };
+const ALL = [...PROJECTS, NEWP];
+
+// Relationships the schemas store as plain String ids. Confirmed by reading how
+// controllers write them (e.g. PlayList.device_id = device._id).
+const INFERRED = {
+  bob: [
+    ['PlayList', 'device_id', 'Device'], ['Transaction', 'device_id', 'Device'],
+    ['Device', 'reseller_id', 'Reseller'], ['Device', 'activated_by', 'Reseller'],
+    ['CouponActivity', 'coupon_id', 'Coupon'], ['LanguageWord', 'language_id', 'Language'],
+    ['LanguageWord', 'word_id', 'Word'], ['ResellerCode', 'reseller_id', 'Reseller'],
+    ['ResellerLogo', 'reseller_id', 'Reseller'], ['ResellerNotification', 'reseller_id', 'Reseller'],
+    ['Admin', 'created_by', 'Admin'],
+  ],
+  cr: [
+    ['PlayList', 'device_id', 'Device'], ['Transaction', 'device_id', 'Device'],
+    ['Device', 'reseller_id', 'Reseller'], ['Device', 'activated_by', 'Reseller'],
+    ['CouponActivity', 'coupon_id', 'Coupon'], ['ResellerCode', 'reseller_id', 'Reseller'],
+    ['ResellerLogo', 'reseller_id', 'Reseller'], ['ResellerNotification', 'reseller_id', 'Reseller'],
+    ['ResellerActivity', 'reseller_id', 'Reseller'], ['ResellerActivity', 'code_id', 'ResellerCode'],
+    ['Notification', 'reseller_id', 'Reseller'], ['Admin', 'created_by', 'Admin'],
+  ],
+  ibo: [
+    ['PlayList', 'device_id', 'Device'], ['Transaction', 'device_id', 'Device'],
+    ['ActivationCode', 'user_id', 'User'], ['ActivationCodeUseHistory', 'code_id', 'ActivationCode'],
+    ['ActivationCodeIPHistory', 'code_id', 'ActivationCode'], ['CouponActivity', 'coupon_id', 'Coupon'],
+    ['LanguageWord', 'language_id', 'Language'], ['LanguageWord', 'word_id', 'Word'],
+    ['Admin', 'created_by', 'Admin'],
+  ],
+  new: [], // the new schema declares its refs on the fields
+};
+
+const SYS = new Set(['_id', '__v', 'createdAt', 'updatedAt']);
+
+// Colour groups, matched on model name in order.
+const GROUPS = [
+  { key: 'code', label: 'Activation codes', test: /^ActivationCode(?!PageContent)|^ResellerCode$|^ResellerActivity$|^activationCodes$|^activationHistory$/ },
+  { key: 'reseller', label: 'Resellers', test: /^Reseller|^resellers$/ },
+  { key: 'device', label: 'Devices & playlists', test: /^(Device|SuspectDevice|PlayList|devices|pendingDevices|playlists|deviceRegistry|licenseTransfers|captchas)$/ },
+  { key: 'user', label: 'Users & admins', test: /^(User|Admin|VerificationToken|PasswordResetToken|RecaptchaToken|customers|staffUsers|authTokens)$/ },
+  { key: 'billing', label: 'Billing & credits', test: /^(Transaction|Coupon|CouponActivity|Plans|CreditPackage|CreditPricePackage|CoinList|transactions|subscriptions|plans|packages|walletAccounts|walletLedger|coupons|couponRedemptions|paymentProviders|coinList)$/ },
+  { key: 'content', label: 'Content & languages', test: /Content$|^(Language|Word|LanguageWord|News|Faq|Notification|Contact|CountryCode|contentPages|news|notifications|contactMessages|languages|translationKeys|translations|countryCodes)$/ },
+  { key: 'system', label: 'System & security', test: /./ },
+];
+const groupOf = name => GROUPS.find(g => g.test.test(name)).key;
+const cc = name => `--cc:var(--g-${groupOf(name)})`;
+const edgeAttr = (pk, to) => `style="${cc(to)}" marker-end="url(#arr-${pk}-${groupOf(to)})"`;
+const state = { tab: 'bob', q: '', hideSys: true, full: false };
+try {
+  const s = JSON.parse(localStorage.getItem('schema-view') || '{}');
+  if (typeof s.hideSys === 'boolean') state.hideSys = s.hideSys;
+  if (typeof s.full === 'boolean') state.full = s.full;
+} catch (e) {}
+const saveView = () => { try { localStorage.setItem('schema-view', JSON.stringify({ hideSys: state.hideSys, full: state.full })); } catch (e) {} };
+const fromHash = location.hash.slice(1);
+if (['bob', 'cr', 'ibo', 'new', 'compare', 'migration'].includes(fromHash)) state.tab = fromHash;
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fileKey = m => m.file.replace(/\.model\.js$/, '');
+
+function relations(pk) {
+  const d = DATA[pk], names = new Set(d.models.map(m => m.name)), out = [];
+  const scan = (m, fields) => fields.forEach(f => {
+    if (f.ref && names.has(f.ref)) out.push({ from: m.name, field: f.path || f.name, to: f.ref, inferred: false });
+    if (f.path && f.children) scan(m, f.children); // new schema: refs can sit on sub-fields
+  });
+  for (const m of d.models) scan(m, m.fields);
+  for (const [from, field, to] of INFERRED[pk]) {
+    if (names.has(from) && names.has(to) && !out.some(r => r.from === from && r.field === field))
+      out.push({ from, field, to, inferred: true });
+  }
+  return out;
+}
+
+function renderStats() {
+  const total = PROJECTS.reduce((n, p) => n + DATA[p.key].models.length, 0);
+  const keys = new Set(PROJECTS.flatMap(p => DATA[p.key].models.map(fileKey)));
+  const shared = [...keys].filter(k => PROJECTS.every(p => DATA[p.key].models.some(m => fileKey(m) === k))).length;
+  document.getElementById('stats').innerHTML =
+    `<div class="stat"><b>${total}</b><span>models</span></div>` +
+    `<div class="stat"><b>${keys.size}</b><span>distinct</span></div>` +
+    `<div class="stat"><b>${shared}</b><span>in all three</span></div>`;
+}
+
+function renderTabs() {
+  const tabs = [...ALL.map(p => ({ key: p.key, label: p.label, color: p.color, n: DATA[p.key].models.length })), { key: 'compare', label: 'Compare', n: null }, { key: 'migration', label: 'Migration', n: null }];
+  const el = document.getElementById('tabs');
+  el.innerHTML = tabs.map(t => `<button role="tab" id="tab-${t.key}" data-k="${t.key}" aria-selected="${state.tab === t.key}" style="${t.color ? `--tab-c:var(${t.color})` : ''}">${t.color ? `<span class="dot" style="--c:var(${t.color})"></span>` : ''}${t.label}${t.n != null ? ` <span class="count">${t.n}</span>` : ''}</button>`).join('');
+  el.onclick = e => { const b = e.target.closest('button'); if (!b) return; state.tab = b.dataset.k; history.replaceState(null, '', '#' + state.tab); render(); };
+}
+
+// Layered ER layout: referenced collections on the right, collections that point at
+// them to the left. Each relation field is its own row, so every arrow starts at the
+// field that holds the id and ends on the collection it points to.
+const M = { head: 30, row: 22, colGap: 130, rowGap: 30, pad: 24, ch: 7.3 };
+
+// rowsFor(id, relationsOut) → [{label, type?, indent?, rel?}]: the rows drawn in each box.
+// A row with a rel is where that arrow starts.
+function layout(rels, rowsFor) {
+  const ids = [...new Set(rels.flatMap(r => [r.from, r.to]))];
+  const out = {}, inc = {};
+  ids.forEach(id => { out[id] = []; inc[id] = []; });
+  for (const r of rels) { out[r.from].push(r); if (r.from !== r.to) inc[r.to].push(r); }
+
+  // rank 0 = only referenced; a source sits one column left of its furthest target
+  const rank = {};
+  const rk = (id, seen = new Set()) => {
+    if (rank[id] != null) return rank[id];
+    if (seen.has(id)) return 0;
+    seen.add(id);
+    const ts = out[id].filter(r => r.to !== id).map(r => rk(r.to, seen) + 1);
+    return (rank[id] = ts.length ? Math.max(...ts) : 0);
+  };
+  ids.forEach(id => rk(id));
+  const maxR = Math.max(...Object.values(rank));
+
+  const nodes = Object.fromEntries(ids.map(id => {
+    const rows = rowsFor(id, out[id]);
+    rows.forEach((row, i) => { if (row.rel) row.rel.fromIdx = i; });
+    const w = Math.max(id.length * 8 + 32, ...rows.map(r => (r.indent || 0) * 12 + r.label.length * M.ch + (r.type ? r.type.length * 6.4 + 24 : 0) + 34), 120);
+    const h = Math.max(M.head + rows.length * M.row + (rows.length ? 6 : 0), inc[id].length * 13 + 12);
+    return [id, { id, rows, col: maxR - rank[id], w, h, hub: inc[id].length >= 3 }];
+  }));
+
+  const cols = Array.from({ length: maxR + 1 }, () => []);
+  // seed order: most-referenced first, then alphabetical
+  ids.sort((a, b) => inc[b].length - inc[a].length || a.localeCompare(b)).forEach(id => cols[nodes[id].col].push(nodes[id]));
+
+  const place = () => cols.forEach(c => { let y = 0; c.forEach(n => { n.y = y; y += n.h + M.rowGap; }); c.height = y - M.rowGap; });
+  const centre = n => n.y + n.h / 2;
+  place();
+  // barycentre sweeps to cut crossings
+  for (let pass = 0; pass < 6; pass++) {
+    const left = pass % 2 === 0;
+    const order = left ? [...cols.keys()].reverse() : [...cols.keys()];
+    for (const ci of order) {
+      const c = cols[ci];
+      c.forEach(n => {
+        const nb = left
+          ? n.rows.filter(r => r.rel && r.rel.to !== n.id).map(r => centre(nodes[r.rel.to]))
+          : inc[n.id].map(r => centre(nodes[r.from]));
+        n.bary = nb.length ? nb.reduce((a, b) => a + b, 0) / nb.length : centre(n);
+      });
+      c.sort((a, b) => a.bary - b.bary);
+      place();
+    }
+  }
+  const H = Math.max(...cols.map(c => c.height));
+  let x = M.pad;
+  cols.forEach(c => {
+    const cw = Math.max(...c.map(n => n.w));
+    const off = (H - c.height) / 2;
+    c.forEach(n => { n.x = x + (cw - n.w) / 2; n.y += off + M.pad; n.w = n.w; });
+    c.x = x; c.w = cw;
+    x += cw + M.colGap;
+  });
+  return { nodes, inc, cols, W: x - M.colGap + M.pad + 30, H: H + M.pad * 2 };
+}
+
+// For an edge that skips columns, pick the free gap in each column it crosses
+// (above, between or below boxes) closest to the straight line, so it never
+// runs through a box.
+function route(cols, s, t, sx, sy, tx, ty) {
+  const pts = [[sx, sy]];
+  for (let c = s.col + 1; c < t.col; c++) {
+    const col = cols[c], want = sy + (ty - sy) * ((col.x + col.w / 2 - sx) / (tx - sx));
+    const gaps = [col[0].y - M.rowGap / 2];
+    for (let i = 0; i < col.length - 1; i++) gaps.push((col[i].y + col[i].h + col[i + 1].y) / 2);
+    gaps.push(col[col.length - 1].y + col[col.length - 1].h + M.rowGap / 2);
+    const gy = gaps.reduce((a, b) => Math.abs(b - want) < Math.abs(a - want) ? b : a);
+    pts.push([col.x - 14, gy], [col.x + col.w + 14, gy]);
+  }
+  pts.push([tx, ty]);
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) {
+    const [x0, y0] = pts[i - 1], [x1, y1] = pts[i];
+    if (y0 === y1) { d += ` L${x1},${y1}`; continue; }
+    const dx = Math.max(30, (x1 - x0) * 0.5);
+    d += ` C${x0 + dx},${y0} ${x1 - dx},${y1} ${x1},${y1}`;
+  }
+  return d;
+}
+
+// Full view: every field of the collection, nested fields indented, relation fields marked.
+function fullRows(pk, id, relsOut) {
+  const model = DATA[pk].models.find(m => m.name === id);
+  const relBy = Object.fromEntries(relsOut.map(r => [r.field, r]));
+  const rows = [];
+  const walk = (fields, depth) => fields.forEach(f => {
+    if (f.name === '__v' || (depth && f.name === '_id') || (state.hideSys && !depth && SYS.has(f.name))) return;
+    const rel = relBy[f.path || f.name];
+    if (rel) delete relBy[f.path || f.name];
+    rows.push({ label: f.name, type: f.type, indent: depth, rel });
+    if (f.children) walk(f.children, depth + 1);
+  });
+  if (model) walk(model.fields, 0);
+  Object.values(relBy).forEach(rel => rows.push({ label: rel.field, rel })); // a relation not found among the fields
+  return rows;
+}
+
+function renderMap(pk, rels, full) {
+  if (!rels.length) return '<p class="empty">No relationships found.</p>';
+  const rowsFor = full ? (id, out) => fullRows(pk, id, out) : (id, out) => out.map(r => ({ label: r.field, rel: r }));
+  const { nodes, inc, cols, W, H } = layout(rels, rowsFor);
+  const pc = ALL.find(p => p.key === pk).color;
+
+  // incoming arrows share the target's left edge, ordered by where they come from
+  const inPort = {};
+  for (const n of Object.values(nodes)) {
+    const list = inc[n.id].slice().sort((a, b) => {
+      const ya = nodes[a.from].y + M.head + a.fromIdx * M.row, yb = nodes[b.from].y + M.head + b.fromIdx * M.row;
+      return ya - yb;
+    });
+    list.forEach((r, i) => { inPort[r.from + '.' + r.field] = n.y + (n.h * (i + 1)) / (list.length + 1); });
+  }
+
+  let edges = '';
+  for (const n of Object.values(nodes)) {
+    n.rows.forEach((row, i) => {
+      const r = row.rel;
+      if (!r) return;
+      const cls = 'edge' + (r.inferred ? ' inferred' : '');
+      const sy = n.y + M.head + i * M.row + M.row / 2 + 3, sx = n.x + n.w;
+      const key = `data-a="${esc(r.from)}" data-b="${esc(r.to)}"`;
+      const title = `<title>${esc(r.from)}.${esc(r.field)} → ${esc(r.to)}${r.inferred ? ' (inferred from code)' : ' (declared ref)'}</title>`;
+      if (r.to === r.from) {
+        const ty = n.y + 15, ex = sx + 34;
+        edges += `<path class="${cls}" ${key} d="M${sx},${sy} C${ex},${sy} ${ex},${ty} ${sx + 7},${ty}" ${edgeAttr(pk, r.to)}>${title}</path>`;
+        return;
+      }
+      const t = nodes[r.to], tx = t.x - 7, ty = inPort[r.from + '.' + r.field];
+      edges += `<path class="${cls}" ${key} d="${route(cols, n, t, sx, sy, tx, ty)}" ${edgeAttr(pk, r.to)}>${title}</path>`;
+    });
+  }
+
+  const nodeSvg = Object.values(nodes).map(n => {
+    const rows = n.rows.map((r, i) => {
+      const y = n.y + M.head + i * M.row + M.row / 2 + 7;
+      const label = `<text class="nf${r.rel && full ? ' rel' : ''}" x="${n.x + 12 + (r.indent || 0) * 12}" y="${y}">${esc(r.label)}</text>`;
+      const type = r.type ? `<text class="ntype" x="${n.x + n.w - 12}" y="${y}" text-anchor="end">${esc(r.type)}</text>` : '';
+      const port = r.rel ? `<circle class="port" cx="${n.x + n.w}" cy="${y - 4}" r="3"/>` : '';
+      return label + type + port;
+    }).join('');
+    const sep = n.rows.length ? `<line class="sep" x1="${n.x}" y1="${n.y + M.head}" x2="${n.x + n.w}" y2="${n.y + M.head}"/>` : '';
+    return `<g class="node${n.hub ? ' hub' : ''}" style="${cc(n.id)}" tabindex="0" role="link" data-go="${esc(n.id)}" aria-label="Go to ${esc(n.id)}">
+      <rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="6"/>${sep}
+      <text class="nh" x="${n.x + 12}" y="${n.rows.length ? n.y + 20 : n.y + n.h / 2 + 5}">${esc(n.id)}</text>${rows}</g>`;
+  }).join('');
+
+  return `<div class="map" style="--pc:var(${pc})"><div class="canvas"><svg class="er" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Relationship map">
+    <defs>${GROUPS.map(g => `<marker id="arr-${pk}-${g.key}" style="--cc:var(--g-${g.key})" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker>`).join('')}</defs>
+    <g class="edges">${edges}</g>${nodeSvg}</svg></div>
+    <div class="groups">${GROUPS.filter(g => Object.keys(nodes).some(id => groupOf(id) === g.key)).map(g => `<span style="--cc:var(--g-${g.key})"><i class="sw"></i>${g.label}</span>`).join('')}</div>
+    <div class="legend">
+      <span class="lg"><svg width="34" height="10" aria-hidden="true"><line x1="0" y1="5" x2="34" y2="5"/></svg>declared <code>ref</code> in the schema</span>
+      ${rels.some(r => r.inferred) ? '<span class="lg"><svg width="34" height="10" aria-hidden="true"><line x1="0" y1="5" x2="34" y2="5" stroke-dasharray="5 4"/></svg>String id, inferred from controller code</span>' : ''}
+      <span>${full ? 'Every field of each linked collection with its type; bold rows hold an id and the arrow points to the collection it belongs to.' : 'Rows are the fields that hold the id; arrows point to the collection it belongs to.'} Hover a box to trace its links, click to jump to it.</span>
+    </div></div>`;
+}
+
+function fieldRows(fields, relMap, pk, depth) {
+  let html = '';
+  for (const f of fields) {
+    if (state.hideSys && SYS.has(f.name)) continue;
+    const flags = [];
+    if (f.required) flags.push('<span class="flag req">req</span>');
+    if (f.unique) flags.push('<span class="flag uniq">unique</span>');
+    if (f.index && !f.unique) flags.push('<span class="flag">index</span>');
+    if (f.enum) flags.push(`<span class="flag" title="${esc(f.enum.join(', '))}">enum</span>`);
+    const rel = relMap[f.path || f.name];
+    const chip = rel ? `<span class="chip${rel.inferred ? ' inferred' : ''}" style="${cc(rel.to)}" tabindex="0" role="link" data-go="${esc(rel.to)}">→ ${esc(rel.to)}</span>` : '';
+    const dflt = f.default !== undefined ? `<span class="dflt">default ${esc(f.default)}</span>` : (f.enum ? `<span class="dflt">${esc(f.enum.join(' | '))}</span>` : '');
+    // new schema only: where the value comes from, and a short note
+    const from = f.old && f.old !== '—' ? `<span class="dflt">from <span class="oldk">${esc(f.old)}</span></span>` : '';
+    const note = f.note ? `<span class="dflt">${esc(f.note)}</span>` : '';
+    html += `<tr class="${SYS.has(f.name) ? 'sys' : ''}${depth ? ' child' : ''}"><td class="f">${esc(f.name)}${flags.length ? `<span class="flags">${flags.join('')}</span>` : ''}${chip}${dflt}${from}${note}</td><td class="t">${esc(f.type)}</td></tr>`;
+    if (f.children) html += fieldRows(f.children.filter(c => c.name !== '_id'), f.path ? relMap : {}, pk, depth + 1);
+  }
+  return html;
+}
+
+function matches(m, q) {
+  if (!q) return true;
+  const hit = fs => fs.some(f => f.name.toLowerCase().includes(q) || (f.children && hit(f.children)));
+  return m.name.toLowerCase().includes(q) || hit(m.fields);
+}
+
+function renderProject(pk) {
+  const p = ALL.find(x => x.key === pk), d = DATA[pk], rels = relations(pk);
+  const q = state.q.trim().toLowerCase();
+  const models = d.models.filter(m => matches(m, q));
+  const cards = models.map(m => {
+    const relMap = Object.fromEntries(rels.filter(r => r.from === m.name).map(r => [r.field, r]));
+    const nf = m.fields.filter(f => !SYS.has(f.name)).length;
+    const meta = [`${nf} fields`, m.db ? (m.db === 'central' ? 'central DB' : 'brand DB') : '', m.timestamps ? 'timestamps' : '', m.collection ? `collection ${m.collection}` : ''].filter(Boolean).join(' · ');
+    const purpose = m.purpose ? `<p class="purpose">${esc(m.purpose)}</p>` : '';
+    const idx = m.idx ? `<p class="idx"><b>Indexes</b> ${esc(m.idx)}</p>` : '';
+    return `<article class="card" style="${cc(m.name)}" id="${pk}-${esc(m.name)}"><header><h3>${esc(m.name)}</h3><span class="meta"><span class="grp">${GROUPS.find(g => g.key === groupOf(m.name)).label}</span> · ${esc(meta)}</span></header>${purpose}<table>${fieldRows(m.fields, relMap, pk, 0)}</table>${idx}</article>`;
+  }).join('');
+  return `<div style="--pc:var(${p.color})">
+    ${pk === 'new' ? `<p class="lead-new">The proposed target schema: a central database shared by every brand plus one database per brand (PLAN.md §5). "from" names the old key each value comes from. The Migration tab has the rules.</p>` : ''}
+    <h2>Relationships <small>${rels.length} links across ${new Set(rels.flatMap(r => [r.from, r.to])).size} collections · <code>${pk === 'new' ? 'proposed schema' : p.dir + '/models'}</code></small></h2>
+    <div class="mapmode" role="group" aria-label="Diagram detail">
+      <button type="button" data-full="0" aria-pressed="${!state.full}">Relations only</button>
+      <button type="button" data-full="1" aria-pressed="${state.full}">With all fields</button>
+    </div>
+    ${renderMap(pk, rels, state.full)}
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="Filter collections or fields, e.g. mac_address" value="${esc(state.q)}" aria-label="Filter collections or fields">
+      <label><input type="checkbox" id="hideSys" ${state.hideSys ? 'checked' : ''}> Hide <code>_id</code>, <code>__v</code>, timestamps</label>
+      <span class="count">${models.length} of ${d.models.length} collections</span>
+    </div>
+    ${models.length ? `<div class="grid">${cards}</div>` : '<p class="empty">No collection or field matches that filter.</p>'}
+  </div>`;
+}
+
+function renderCompare() {
+  const keys = [...new Set(PROJECTS.flatMap(p => DATA[p.key].models.map(fileKey)))].sort((a, b) => a.localeCompare(b));
+  const get = (pk, k) => DATA[pk].models.find(m => fileKey(m) === k);
+  const rows = keys.map(k => {
+    const ms = PROJECTS.map(p => get(p.key, k));
+    const names = ms.filter(Boolean).map(m => m.name);
+    const nameNote = new Set(names).size > 1 ? ` <span class="flag" title="Registered model names differ">${esc([...new Set(names)].join(' / '))}</span>` : '';
+    const cells = PROJECTS.map((p, i) => ms[i] ? `<td class="c"><span class="pres" style="--c:var(${p.color})">${ms[i].fields.filter(f => !SYS.has(f.name)).length}</span></td>` : `<td class="c abs">—</td>`).join('');
+    return `<tr class="row" data-k="${esc(k)}" tabindex="0"><td class="n"><span class="dot" style="--c:var(--g-${groupOf(ms.find(Boolean).name)})"></span> ${esc(k)}${nameNote}</td>${cells}<td>${newCell(k)}</td></tr>`;
+  }).join('');
+  // new collections nothing migrates into
+  const targeted = new Set(Object.values(DATA.new.map).flatMap(m => m.targets));
+  const fresh = DATA.new.models.filter(m => !targeted.has(m.name)).map(m => m.name).sort((a, b) => a.localeCompare(b));
+  const freshRows = fresh.map(n => `<tr class="fresh"><td class="n"><span class="dot" style="--c:var(--g-${groupOf(n)})"></span> <span class="muted">no old collection</span></td>${PROJECTS.map(() => '<td class="c abs">—</td>').join('')}<td>${newChip(n)} <span class="flag">new</span></td></tr>`).join('');
+  return `<h2>Collections across projects <small>Old columns show field counts (excluding _id, __v, timestamps); the New Unified column shows where each collection goes. Click a row to compare its keys, click a new collection to open it.</small></h2>
+    <div class="matrix-wrap"><table class="matrix" id="matrix"><thead><tr><th>Model file</th>${PROJECTS.map(p => `<th class="c"><span class="dot" style="--c:var(${p.color})"></span> ${p.label}</th>`).join('')}<th><span class="dot" style="--c:var(${NEWP.color})"></span> ${NEWP.label}</th></tr></thead><tbody>${rows}${freshRows}</tbody></table></div>
+    <p class="note">Rows are matched by file name in <code>models/</code>. BOB and IBO register <code>BlockedIPAddress.model.js</code> under the misspelled model name <code>BlockedIPAdress</code>; CR spells it correctly. IBO's <code>ActivationCodeAssignHistory.model.js</code> registers as <code>ActivationCodeUseHistory</code>.</p>`;
+}
+
+function diffRow(k) {
+  const fieldsOf = pk => { const m = DATA[pk].models.find(x => fileKey(x) === k); return m ? new Set(m.fields.map(f => f.name).filter(n => !SYS.has(n))) : null; };
+  const sets = PROJECTS.map(p => fieldsOf(p.key)), present = sets.filter(Boolean);
+  const all = [...new Set(present.flatMap(s => [...s]))];
+  const common = all.filter(f => present.every(s => s.has(f)));
+  const cols = [];
+  if (present.length > 1) cols.push(`<div><h4>In all ${present.length} (${common.length})</h4><ul>${common.map(f => `<li>${esc(f)}</li>`).join('') || '<li>none</li>'}</ul></div>`);
+  PROJECTS.forEach((p, i) => {
+    if (!sets[i]) return;
+    const only = [...sets[i]].filter(f => !common.includes(f) || present.length === 1);
+    if (present.length === 1 || only.length) cols.push(`<div><h4><span class="dot" style="--c:var(${p.color})"></span> ${present.length === 1 ? 'Only in ' + p.label : 'Not shared by all · ' + p.label} (${only.length})</h4><ul>${only.map(f => `<li>${esc(f)}</li>`).join('')}</ul></div>`);
+  });
+  // every old key of this collection, and the new field it becomes
+  const mapping = DATA.new.map[k];
+  if (mapping) {
+    const targets = DATA.new.models.filter(m => mapping.targets.includes(m.name));
+    // pendingDevices repeats the devices fields; list each such field once
+    const twin = mapping.targets.includes('devices') && mapping.targets.includes('pendingDevices');
+    const lines = all.sort().map(key => {
+      const hits = targets.flatMap(m => newFieldsFrom(m, key).map(path => `${m.name}.${path}`))
+        .filter(h => !(twin && h.startsWith('pendingDevices.')));
+      return hits.length
+        ? `<li><span class="oldk">${esc(key)}</span> <span class="muted">→</span> ${hits.map(esc).join(', ')}</li>`
+        : (DATA.new.dropped[k] && DATA.new.dropped[k][key])
+          ? `<li class="drop"><span class="oldk">${esc(key)}</span> <span class="muted">→ not kept:</span> ${esc(DATA.new.dropped[k][key])}</li>`
+          : `<li class="miss"><span class="oldk">${esc(key)}</span> <span class="muted">→</span> not kept, no reason recorded</li>`;
+    });
+    cols.push(`<div class="newcol"><h4><span class="dot" style="--c:var(${NEWP.color})"></span> In ${NEWP.label}</h4><p class="rule">${esc(mapping.rule)}${twin ? ' pendingDevices has the same fields as devices (without license and activatedAt), so they are listed once.' : ''}</p><ul>${lines.join('') || '<li>no fields</li>'}</ul></div>`);
+  }
+  return `<tr class="diff"><td colspan="${PROJECTS.length + 2}"><div class="cols">${cols.join('')}</div></td></tr>`;
+}
+
+// New Unified column: the new collections an old one becomes
+function newChip(n) {
+  return `<span class="tchip" style="${cc(n)}" data-new="${esc(n)}" tabindex="0" role="link">${esc(n)}</span>`;
+}
+function newCell(k) {
+  const m = DATA.new.map[k];
+  if (!m) return '<span class="muted">—</span>';
+  return m.targets.length ? m.targets.map(newChip).join(' ') : '<span class="nomig">not migrated</span>';
+}
+// paths of new fields whose "from" names this old key
+function newFieldsFrom(model, key) {
+  const out = [];
+  const walk = fs => fs.forEach(f => {
+    const olds = String(f.old || '').split(/,\s*|\s+\/\s+|\s+or\s+/).map(s => s.trim().replace(/^\w+\./, '').replace(/\s*\(.*\)$/, ''));
+    if (olds.includes(key)) out.push(f.path || f.name);
+    if (f.children) walk(f.children);
+  });
+  walk(model.fields);
+  return out;
+}
+
+function go(name) {
+  const el = document.getElementById(`${state.tab}-${name}`);
+  if (!el) { state.q = ''; render(); return go2(name); }
+  go2(name);
+}
+function go2(name) {
+  const el = document.getElementById(`${state.tab}-${name}`);
+  if (!el) return;
+  el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1400);
+}
+
+function render() {
+  renderTabs();
+  const view = document.getElementById('view');
+  const onMigration = state.tab === 'migration';
+  view.hidden = onMigration;
+  document.getElementById('migration').hidden = !onMigration;
+  if (onMigration) { view.innerHTML = ''; return; }
+  view.innerHTML = state.tab === 'compare' ? renderCompare() : renderProject(state.tab);
+  const q = document.getElementById('q');
+  if (q) q.addEventListener('input', () => { state.q = q.value; const pos = q.selectionStart; render(); const nq = document.getElementById('q'); nq.focus(); nq.setSelectionRange(pos, pos); });
+  const hs = document.getElementById('hideSys');
+  if (hs) hs.addEventListener('change', () => { state.hideSys = hs.checked; saveView(); render(); });
+  document.querySelectorAll('#view .mapmode button').forEach(b => b.addEventListener('click', () => {
+    state.full = b.dataset.full === '1'; saveView(); render();
+  }));
+  const mx = document.getElementById('matrix');
+  if (mx) {
+    const toggle = tr => { const next = tr.nextElementSibling; if (next && next.classList.contains('diff')) next.remove(); else tr.insertAdjacentHTML('afterend', diffRow(tr.dataset.k)); };
+    // a new-collection chip opens that card on the New Unified tab instead of expanding the row
+    const openNew = chip => { state.tab = 'new'; state.q = ''; history.replaceState(null, '', '#new'); render(); go(chip.dataset.new); };
+    mx.addEventListener('click', e => {
+      const chip = e.target.closest('[data-new]');
+      if (chip) return openNew(chip);
+      const tr = e.target.closest('tr.row'); if (tr) toggle(tr);
+    });
+    mx.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const chip = e.target.closest('[data-new]');
+      if (chip) { e.preventDefault(); return openNew(chip); }
+      const tr = e.target.closest('tr.row'); if (tr) { e.preventDefault(); toggle(tr); }
+    });
+  }
+}
+
+document.getElementById('view').addEventListener('click', e => { const t = e.target.closest('[data-go]'); if (t) go(t.dataset.go); });
+const trace = (e, on) => {
+  const g = e.target.closest && e.target.closest('.node'), svg = g && g.closest('svg');
+  if (!g) return;
+  svg.classList.toggle('tracing', on);
+  svg.querySelectorAll('.edge').forEach(p => p.classList.toggle('hot', on && (p.dataset.a === g.dataset.go || p.dataset.b === g.dataset.go)));
+};
+['mouseover', 'focusin'].forEach(ev => document.getElementById('view').addEventListener(ev, e => trace(e, true)));
+['mouseout', 'focusout'].forEach(ev => document.getElementById('view').addEventListener(ev, e => trace(e, false)));
+document.getElementById('view').addEventListener('keydown',e => { const t = e.target.closest('[data-go]'); if (t && e.key === 'Enter') go(t.dataset.go); });
+renderStats();
+render();
+</script>
